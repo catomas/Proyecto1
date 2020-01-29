@@ -18,7 +18,7 @@ app.get('/usuario', (req, res) => {
 })
 
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', (req, res) => {
     let body = req.body;
 
     let usuario = new Usuario({
@@ -44,36 +44,40 @@ app.post('/usuario', function(req, res) {
     });
 });
 
-app.put('/usuario/location', authentication.verificaToken, function(req, res) {
-    let body
+app.put('/usuario/location', authentication.verificaToken, (req, res) => {
+    let body = req.body
 
-    const id = req.usuario.id
-    const coordenadas = 'lat=${'
+    const id = req.usuario._id
+    const coordenadas = `latitud=${body.latitud},longitud=${body.longitud}`
 
-    console.log(id);
+    Usuario.findById(id, (err, DB) => {
 
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
 
+        }
 
-    //let body = _.pick(req.body, ['location']);
+        if (!DB) {
 
+        }
 
-    // Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioDB) => {
+        DB.location.push(coordenadas);
 
-    //     if (err) {
+        DB.save((err, usuarioActualizado) => {
 
-    //         return res.status(400).json({
-    //             ok: false,
-    //             err
-    //         });
-    // }
-
-    res.json({
-        ok: true,
-        usuario: usuario
+            res.json({
+                err: false,
+                usuario: usuarioActualizado
+            });
+        });
     });
 
 
-})
+    //let body = _.pick(req.body, ['location']);
+});
 
 //});
 
