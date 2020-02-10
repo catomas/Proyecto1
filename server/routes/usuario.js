@@ -8,13 +8,29 @@ const authentication = require('../middlewares/authentication');
 
 const app = express();
 
-app.get('/usuario', (req, res) => {
 
-    return res.json({
-        usuario: req.usuario,
-        email: req.usuario.email
+
+app.get('/usuario/location', authentication.verificaToken, (req, res) => {
+
+
+    const id = req.usuario._id
+    Usuario.findById(id, (err, usuario) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        } else {
+
+            return res.json({
+                location: usuario.location
+            })
+
+
+        }
+
+
     })
-
 })
 
 
